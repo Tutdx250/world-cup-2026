@@ -58,19 +58,66 @@ h1 {
 .date {
     margin-top: 5px;
 }
+.boutons{
+    text-align:center;
+    margin-bottom:20px;
+}
+.boutons button{
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#0066cc;
+    color:white;
+    font-weight:bold;
+}
+
+.boutons button:hover{
+    background:#004999;
+}
 </style>
 </head>
 <body>
 
 <h1>🏆 Coupe du Monde 2026</h1>
+<div class="boutons">
+
+<button onclick="filtrer('A')">A</button>
+<button onclick="filtrer('B')">B</button>
+<button onclick="filtrer('C')">C</button>
+<button onclick="filtrer('D')">D</button>
+
+<button onclick="filtrer('E')">E</button>
+<button onclick="filtrer('F')">F</button>
+<button onclick="filtrer('G')">G</button>
+<button onclick="filtrer('H')">H</button>
+
+<button onclick="filtrer('I')">I</button>
+<button onclick="filtrer('J')">J</button>
+<button onclick="filtrer('K')">K</button>
+<button onclick="filtrer('L')">L</button>
+
+<br><br>
+
+<button onclick="filtrer('Round of 32')">32e</button>
+<button onclick="filtrer('Round of 16')">16e</button>
+<button onclick="filtrer('Quarter-finals')">Quarts</button>
+<button onclick="filtrer('Semi-finals')">Demi</button>
+<button onclick="filtrer('Third place play-off')">3e place</button>
+<button onclick="filtrer('Final')">Finale</button>
+
+<button onclick="filtrer('all')">Tous</button>
+
+</div>
 """
 
 # Ajout des matchs
 for match in matches:
 
     html += f"""
-    <div class="match">
-        <div class="groupe">{match.get("groupe", "")}</div>
+        <div class="match" data-groupe="{match.get('groupe', '')}">
+            <div class="groupe">{match.get("groupe", "")}</div>
     """
 
     if match["termine"]:
@@ -98,6 +145,35 @@ for match in matches:
 
 # Fin du HTML
 html += """
+<script>
+
+function filtrer(groupe){
+
+    let matchs =
+    document.querySelectorAll('.match');
+
+    matchs.forEach(match => {
+
+        if(groupe === 'all'){
+            match.style.display='block';
+        }
+
+        else if(
+            match.dataset.groupe === groupe
+        ){
+            match.style.display='block';
+        }
+
+        else{
+            match.style.display='none';
+        }
+
+    });
+
+}
+
+</script>
+
 </body>
 </html>
 """
