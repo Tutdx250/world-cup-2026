@@ -4,7 +4,192 @@ from pathlib import Path
 # Lecture des données
 with open("matches.json", "r", encoding="utf-8") as f:
     matches = json.load(f)
+flags = {
+    "Canada": "https://flagcdn.com/w40/ca.png",
+    "États-Unis": "https://flagcdn.com/w40/us.png",
+    "Mexique": "https://flagcdn.com/w40/mx.png",
 
+    "Arabie saoudite": "https://flagcdn.com/w40/sa.png",
+    "Australie": "https://flagcdn.com/w40/au.png",
+    "Irak": "https://flagcdn.com/w40/iq.png",
+    "Japon": "https://flagcdn.com/w40/jp.png",
+    "Jordanie": "https://flagcdn.com/w40/jo.png",
+    "Ouzbékistan": "https://flagcdn.com/w40/uz.png",
+    "Qatar": "https://flagcdn.com/w40/qa.png",
+    "République de Corée": "https://flagcdn.com/w40/kr.png",
+    "RI Iran": "https://flagcdn.com/w40/ir.png",
+
+    "Afrique du Sud": "https://flagcdn.com/w40/za.png",
+    "Algérie": "https://flagcdn.com/w40/dz.png",
+    "Cap-Vert": "https://flagcdn.com/w40/cv.png",
+    "Côte d'Ivoire": "https://flagcdn.com/w40/ci.png",
+    "Égypte": "https://flagcdn.com/w40/eg.png",
+    "Ghana": "https://flagcdn.com/w40/gh.png",
+    "Maroc": "https://flagcdn.com/w40/ma.png",
+    "RD Congo": "https://flagcdn.com/w40/cd.png",
+    "Sénégal": "https://flagcdn.com/w40/sn.png",
+    "Tunisie": "https://flagcdn.com/w40/tn.png",
+
+    "Curaçao": "https://flagcdn.com/w40/cw.png",
+    "Haïti": "https://flagcdn.com/w40/ht.png",
+    "Panama": "https://flagcdn.com/w40/pa.png",
+    "Panamá": "https://flagcdn.com/w40/pa.png",
+
+    "Argentine": "https://flagcdn.com/w40/ar.png",
+    "Brésil": "https://flagcdn.com/w40/br.png",
+    "Colombie": "https://flagcdn.com/w40/co.png",
+    "Équateur": "https://flagcdn.com/w40/ec.png",
+    "Paraguay": "https://flagcdn.com/w40/py.png",
+    "Uruguay": "https://flagcdn.com/w40/uy.png",
+
+    "Nouvelle-Zélande": "https://flagcdn.com/w40/nz.png",
+
+    "Allemagne": "https://flagcdn.com/w40/de.png",
+    "Angleterre": "https://flagcdn.com/w40/gb.png",
+    "Autriche": "https://flagcdn.com/w40/at.png",
+    "Belgique": "https://flagcdn.com/w40/be.png",
+    "Bosnie-et-Herzégovine": "https://flagcdn.com/w40/ba.png",
+    "Bosnia and Herzegovina": "https://flagcdn.com/w40/ba.png",
+    "Croatie": "https://flagcdn.com/w40/hr.png",
+    "Écosse": "https://flagcdn.com/w40/gb-sct.png",
+    "Espagne": "https://flagcdn.com/w40/es.png",
+    "France": "https://flagcdn.com/w40/fr.png",
+    "Norvège": "https://flagcdn.com/w40/no.png",
+    "Pays-Bas": "https://flagcdn.com/w40/nl.png",
+    "Portugal": "https://flagcdn.com/w40/pt.png",
+    "Suède": "https://flagcdn.com/w40/se.png",
+    "Suisse": "https://flagcdn.com/w40/ch.png",
+    "Tchéquie": "https://flagcdn.com/w40/cz.png",
+    "Turquie": "https://flagcdn.com/w40/tr.png",
+    "Bosnie-Herzégovine": "https://flagcdn.com/w40/ba.png",
+    "Iran": "https://flagcdn.com/w40/ir.png",
+    "Corée du Sud": "https://flagcdn.com/w40/kr.png"
+}
+def flag(team):
+    url = flags.get(team)
+    if url:
+        return f'<img src="{url}" class="flag">'
+    return ""
+def calculer_classement(matches, groupe):
+    classement = {}
+
+    # 1) AJOUTER TOUTES LES ÉQUIPES DU GROUPE (même sans match joué)
+    for m in matches:
+        if m["groupe"] != groupe:
+            continue
+
+        classement.setdefault(m["equipe1"], {
+            "pts": 0,
+            "vic": 0,
+            "nul": 0,
+            "def": 0
+        })
+
+        classement.setdefault(m["equipe2"], {
+            "pts": 0,
+            "vic": 0,
+            "nul": 0,
+            "def": 0
+        })
+
+    # 2) ensuite seulement tu calcules les matchs joués
+    for m in matches:
+        if m["groupe"] != groupe:
+            continue
+        if not m["termine"]:
+            continue
+
+        eq1 = m["equipe1"]
+        eq2 = m["equipe2"]
+
+        s1, s2 = map(int, m["score"].replace(" ", "").split("-"))
+
+        if s1 > s2:
+            classement[eq1]["pts"] += 3
+            classement[eq1]["vic"] += 1
+            classement[eq2]["def"] += 1
+
+        elif s2 > s1:
+            classement[eq2]["pts"] += 3
+            classement[eq2]["vic"] += 1
+            classement[eq1]["def"] += 1
+
+        else:
+            classement[eq1]["pts"] += 1
+            classement[eq2]["pts"] += 1
+            classement[eq1]["nul"] += 1
+            classement[eq2]["nul"] += 1
+
+    return sorted(
+        classement.items(),
+        key=lambda x: (x[1]["pts"], x[1]["vic"], -x[1]["def"]),
+        reverse=True
+    )
+
+classements_par_groupe = {}
+
+for m in matches:
+    g = m["groupe"]
+    if g not in classements_par_groupe:
+        classements_par_groupe[g] = calculer_classement(matches, g)
+classement_html = ""
+
+for groupe, classement in classements_par_groupe.items():
+    classement_html += f'<div class="classement-groupe" data-groupe="{groupe}" style="display:none;">'
+    classement_html += f"<h3>Classement Groupe {groupe}</h3>"
+
+    classement_html += """
+    <table style="
+        width:100%;
+        border-collapse:collapse;
+        background:white;
+        border-radius:10px;
+        overflow:hidden;
+        box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    ">
+    <tr style="background:#0066cc; color:white;">
+        <th>#</th>
+        <th>Équipe</th>
+        <th>Pts</th>
+        <th>V</th>
+        <th>N</th>
+        <th>D</th>
+    </tr>
+    """
+
+    position = 1
+
+    for equipe, stats in classement:
+        if position == 1:
+            medal = "🥇"
+        elif position == 2:
+            medal = "🥈"
+        elif position == 3:
+            medal = "🥉"
+        else:
+            medal = str(position)
+
+        classement_html += f"""
+        <tr style="border-bottom:1px solid #eee;">
+    
+            <td style="width:50px; text-align:center; font-size:18px;">
+                {medal}
+            </td>
+
+            <td style="text-align:left; display:flex; align-items:center; gap:8px;">
+                {flag(equipe)} <span>{equipe}</span>
+            </td>
+
+            <td><b>{stats['pts']}</b></td>
+            <td>{stats['vic']}</td>
+            <td>{stats['nul']}</td>
+            <td>{stats['def']}</td>
+
+        </tr>
+        """
+        position += 1
+
+    classement_html += "</table></div>"
 # Début du HTML
 html = """
 <!DOCTYPE html>
@@ -76,39 +261,203 @@ h1 {
 .boutons button:hover{
     background:#004999;
 }
+.flag{
+    width:22px;
+    height:16px;
+    vertical-align:middle;
+    margin:0 6px;
+    border-radius:3px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.2);
+}
+.dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.dropbtn {
+    background-color: #0066cc;
+    color: white;
+    padding: 10px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.dropbtn:hover {
+    background-color: #004999;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 220px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.dropdown-content button {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.dropdown-content button:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+th, td {
+    text-align: center;
+    padding: 10px;
+}
+
+td:nth-child(2) {
+    text-align: left;
+}
+td {
+    font-variant-numeric: tabular-nums;
+}
+#classement {
+    margin-bottom: 30px;
+}
+
+.classement-groupe {
+    margin-bottom: 30px;
+}
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* clé */
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+/* bloc gauche = filtre */
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+/* dropdown corrigé */
+.dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* menu corrigé (évite de sortir écran) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    min-width: 220px;
+    max-height: 300px;
+    overflow-y: auto; /* IMPORTANT */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    z-index: 1000;
+    padding: 10px;
+}
+
+/* bouton phase finale à droite */
+.toolbar-right {
+    display: flex;
+    align-items: center;
+}
+.bracket-btn {
+    background: gold;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.bracket-btn:hover {
+    background: #e6c200;
+}
 </style>
 </head>
 <body>
+<div id="classement"></div>
+</div>
 
 <h1>🏆 Coupe du Monde 2026</h1>
-<div class="boutons">
 
-<button onclick="filtrer('A')">A</button>
-<button onclick="filtrer('B')">B</button>
-<button onclick="filtrer('C')">C</button>
-<button onclick="filtrer('D')">D</button>
+<div class="toolbar-left">
 
-<button onclick="filtrer('E')">E</button>
-<button onclick="filtrer('F')">F</button>
-<button onclick="filtrer('G')">G</button>
-<button onclick="filtrer('H')">H</button>
+    <div class="dropdown">
+        <button class="dropbtn">🎛️ Filtrer</button>
 
-<button onclick="filtrer('I')">I</button>
-<button onclick="filtrer('J')">J</button>
-<button onclick="filtrer('K')">K</button>
-<button onclick="filtrer('L')">L</button>
+        <div class="dropdown-content">
+            <button onclick="filtrer('A')">Groupe A</button>
+            <button onclick="filtrer('B')">Groupe B</button>
+            <button onclick="filtrer('C')">Groupe C</button>
+            <button onclick="filtrer('D')">Groupe D</button>
+            <button onclick="filtrer('E')">Groupe E</button>
+            <button onclick="filtrer('F')">Groupe F</button>
+            <button onclick="filtrer('G')">Groupe G</button>
+            <button onclick="filtrer('H')">Groupe H</button>
+            <button onclick="filtrer('I')">Groupe I</button>
+            <button onclick="filtrer('J')">Groupe J</button>
+            <button onclick="filtrer('K')">Groupe K</button>
+            <button onclick="filtrer('L')">Groupe L</button>
+            
+            <hr>
+            
+            <button onclick="filtrer('Seizièmes de finale')">Seizièmes</button>
+            <button onclick="filtrer('Huitièmes de finale')">Huitièmes</button>
+            <button onclick="filtrer('Quarts de finale')">Quarts</button>
+            <button onclick="filtrer('Demi-finales')">Demi-finales</button>
+            <button onclick="filtrer('Match pour la 3e place')">3e place</button>
+            <button onclick="filtrer('Finale')">Finale</button>
 
-<br><br>
+            <hr>
 
-<button onclick="filtrer('Round of 32')">32e</button>
-<button onclick="filtrer('Round of 16')">16e</button>
-<button onclick="filtrer('Quarter-finals')">Quarts</button>
-<button onclick="filtrer('Semi-finals')">Demi</button>
-<button onclick="filtrer('Third place play-off')">3e place</button>
-<button onclick="filtrer('Final')">Finale</button>
+            <button onclick="filtrer('all')">Tous</button>
+        </div>
+    </div>
 
-<button onclick="filtrer('all')">Tous</button>
+</div>
 
+<div class="toolbar-right">
+    <button class="bracket-btn"
+            onclick="window.location.href='bracket.html'">
+        🏆 Phase finale
+    </button>
+</div>
+
+</div>
+
+<div id="classement">
+    """ + classement_html + """
 </div>
 """
 
@@ -123,7 +472,7 @@ for match in matches:
     if match["termine"]:
         html += f"""
         <div class="teams">
-            {match["equipe1"]} {match["score"]} {match["equipe2"]}
+            {flag(match["equipe1"])} {match["equipe1"]} {match["score"]}  {match["equipe2"]} {flag(match["equipe2"])}
         </div>
         <div class="score">Match terminé</div>
         <div class="date">{match["date"]}</div>
@@ -131,7 +480,7 @@ for match in matches:
     else:
         html += f"""
         <div class="teams">
-            {match["equipe1"]} - {match["equipe2"]}
+            {flag(match["equipe1"])} {match["equipe1"]} -  {match["equipe2"]} {flag(match["equipe2"])}
         </div>
         <div class="future">
             Match à venir
@@ -147,31 +496,47 @@ for match in matches:
 html += """
 <script>
 
+window.onload = function() {
+    filtrer('all');
+};
+
 function filtrer(groupe){
 
-    let matchs =
-    document.querySelectorAll('.match');
+    let matchs = document.querySelectorAll('.match');
+    let classements = document.querySelectorAll('.classement-groupe');
 
     matchs.forEach(match => {
 
-        if(groupe === 'all'){
-            match.style.display='block';
-        }
-
-        else if(
-            match.dataset.groupe === groupe
-        ){
-            match.style.display='block';
-        }
-
-        else{
-            match.style.display='none';
+        if(groupe === 'all' || match.dataset.groupe === groupe){
+            match.style.display = 'block';
+        } else {
+            match.style.display = 'none';
         }
 
     });
 
-}
+classements.forEach(c => {
 
+    if(
+        groupe === 'all' ||
+        groupe === 'Seizièmes de finale' ||
+        groupe === 'Huitièmes de finale' ||
+        groupe === 'Quarts de finale' ||
+        groupe === 'Demi-finales' ||
+        groupe === 'Match pour la 3e place' ||
+        groupe === 'Finale'
+    ){
+        c.style.display = 'none';
+    }
+    else if(c.dataset.groupe === groupe){
+        c.style.display = 'block';
+    }
+    else{
+        c.style.display = 'none';
+    }
+
+});
+}
 </script>
 
 </body>

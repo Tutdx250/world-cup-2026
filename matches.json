@@ -99,45 +99,40 @@
     "equipe1": "Espagne",
     "equipe2": "Cap-Vert",
     "date": "2026-06-15",
-    "termine": false,
-    "heure": "18:00",
-    "score": "Non défini",
+    "termine": true,
+    "score": "0 - 0",
     "groupe": "H"
   },
   {
     "equipe1": "Belgique",
     "equipe2": "Égypte",
     "date": "2026-06-15",
-    "termine": false,
-    "heure": "21:00",
-    "score": "Non défini",
+    "termine": true,
+    "score": "1 - 1",
     "groupe": "G"
   },
   {
     "equipe1": "Arabie saoudite",
     "equipe2": "Uruguay",
     "date": "2026-06-16",
-    "termine": false,
-    "heure": "00:00",
-    "score": "Non défini",
+    "termine": true,
+    "score": "1 - 1",
     "groupe": "H"
   },
   {
     "equipe1": "Iran",
     "equipe2": "Nouvelle-Zélande",
     "date": "2026-06-16",
-    "termine": false,
-    "heure": "03:00",
-    "score": "Non défini",
+    "termine": true,
+    "score": "2 -2",
     "groupe": "G"
   },
   {
     "equipe1": "France",
     "equipe2": "Sénégal",
     "date": "2026-06-16",
-    "termine": false,
-    "heure": "21:00",
-    "score": "Non défini",
+    "termine": true,
+    "score": "3 - 1",
     "groupe": "I"
   },
   {
@@ -249,8 +244,8 @@
     "groupe": "D"
   },
   {
-    "equipe1": "Scotland",
-    "equipe2": "Morocco",
+    "equipe1": "Écosse",
+    "equipe2": "Maroc",
     "date": "2026-06-20",
     "termine": false,
     "heure": "00:00",
@@ -267,7 +262,7 @@
     "groupe": "C"
   },
   {
-    "equipe1": "Türkiye",
+    "equipe1": "Turquie",
     "equipe2": "Paraguay",
     "date": "2026-06-20",
     "termine": false,
@@ -276,8 +271,8 @@
     "groupe": "D"
   },
   {
-    "equipe1": "Netherlands",
-    "equipe2": "Sweden",
+    "equipe1": "Pays-Bas",
+    "equipe2": "Suède",
     "date": "2026-06-20",
     "termine": false,
     "heure": "19:00",
@@ -285,8 +280,8 @@
     "groupe": "F"
   },
   {
-    "equipe1": "Germany",
-    "equipe2": "Ivory Coast",
+    "equipe1": "Allemagne",
+    "equipe2": "Côte d'Ivoire",
     "date": "2026-06-20",
     "termine": false,
     "heure": "22:00",
@@ -294,7 +289,7 @@
     "groupe": "E"
   },
   {
-    "equipe1": "Ecuador",
+    "equipe1": "Équateur",
     "equipe2": "Curaçao",
     "date": "2026-06-21",
     "termine": false,
@@ -303,8 +298,8 @@
     "groupe": "E"
   },
   {
-    "equipe1": "Tunisia",
-    "equipe2": "Japan",
+    "equipe1": "Tunisie",
+    "equipe2": "Japon",
     "date": "2026-06-21",
     "termine": false,
     "heure": "06:00",
@@ -312,8 +307,8 @@
     "groupe": "F"
   },
   {
-    "equipe1": "Spain",
-    "equipe2": "Saudi Arabia",
+    "equipe1": "Espagne",
+    "equipe2": "Arabie saoudite",
     "date": "2026-06-21",
     "termine": false,
     "heure": "18:00",
@@ -321,7 +316,7 @@
     "groupe": "H"
   },
   {
-    "equipe1": "Belgium",
+    "equipe1": "Belgique",
     "equipe2": "Iran",
     "date": "2026-06-21",
     "termine": false,
@@ -331,7 +326,7 @@
   },
   {
     "equipe1": "Uruguay",
-    "equipe2": "Cabo Verde",
+    "equipe2": "Cap-Vert",
     "date": "2026-06-22",
     "termine": false,
     "heure": "00:00",
@@ -339,8 +334,8 @@
     "groupe": "H"
   },
   {
-    "equipe1": "New Zealand",
-    "equipe2": "Egypt",
+    "equipe1": "Nouvelle-Zélande",
+    "equipe2": "Égypte",
     "date": "2026-06-22",
     "termine": false,
     "heure": "03:00",
@@ -348,8 +343,8 @@
     "groupe": "G"
   },
   {
-    "equipe1": "Argentina",
-    "equipe2": "Austria",
+    "equipe1": "Argentine",
+    "equipe2": "Autriche",
     "date": "2026-06-22",
     "termine": false,
     "heure": "19:00",
@@ -358,7 +353,7 @@
   },
   {
     "equipe1": "France",
-    "equipe2": "Iraq",
+    "equipe2": "Irak",
     "date": "2026-06-22",
     "termine": false,
     "heure": "23:00",
@@ -366,8 +361,8 @@
     "groupe": "I"
   },
   {
-    "equipe1": "Norway",
-    "equipe2": "Senegal",
+    "equipe1": "Norvège",
+    "equipe2": "Sénégal",
     "date": "2026-06-23",
     "termine": false,
     "heure": "02:00",
@@ -375,8 +370,8 @@
     "groupe": "I"
   },
   {
-    "equipe1": "Jordan",
-    "equipe2": "Algeria",
+    "equipe1": "Jordanie",
+    "equipe2": "Algérie",
     "date": "2026-06-23",
     "termine": false,
     "heure": "05:00",
@@ -385,7 +380,7 @@
   },
   {
     "equipe1": "Portugal",
-    "equipe2": "Uzbekistan",
+    "equipe2": "Ouzbékistan",
     "date": "2026-06-23",
     "termine": false,
     "heure": "19:00",
@@ -393,7 +388,7 @@
     "groupe": "K"
   },
   {
-    "equipe1": "England",
+    "equipe1": "Angleterre",
     "equipe2": "Ghana",
     "date": "2026-06-23",
     "termine": false,
@@ -403,7 +398,7 @@
   },
   {
     "equipe1": "Panama",
-    "equipe2": "Croatia",
+    "equipe2": "Croatie",
     "date": "2026-06-24",
     "termine": false,
     "heure": "01:00",
@@ -411,8 +406,8 @@
     "groupe": "L"
   },
   {
-    "equipe1": "Colombia",
-    "equipe2": "DR Congo",
+    "equipe1": "Colombie",
+    "equipe2": "RD Congo",
     "date": "2026-06-24",
     "termine": false,
     "heure": "04:00",
@@ -420,7 +415,7 @@
     "groupe": "K"
   },
   {
-    "equipe1": "Switzerland",
+    "equipe1": "Suisse",
     "equipe2": "Canada",
     "date": "2026-06-24",
     "termine": false,
@@ -429,7 +424,7 @@
     "groupe": "B"
   },
   {
-    "equipe1": "Bosnia and Herzegovina",
+    "equipe1": "Bosnie-Herzégovine",
     "equipe2": "Qatar",
     "date": "2026-06-24",
     "termine": false,
@@ -438,8 +433,8 @@
     "groupe": "B"
   },
   {
-    "equipe1": "Morocco",
-    "equipe2": "Haiti",
+    "equipe1": "Maroc",
+    "equipe2": "Haïti",
     "date": "2026-06-25",
     "termine": false,
     "heure": "00:00",
@@ -447,8 +442,8 @@
     "groupe": "C"
   },
   {
-    "equipe1": "Scotland",
-    "equipe2": "Brazil",
+    "equipe1": "Écosse",
+    "equipe2": "Brésil",
     "date": "2026-06-25",
     "termine": false,
     "heure": "00:00",
@@ -456,8 +451,8 @@
     "groupe": "C"
   },
   {
-    "equipe1": "South Africa",
-    "equipe2": "South Korea",
+    "equipe1": "Afrique du Sud",
+    "equipe2": "Corée du Sud",
     "date": "2026-06-25",
     "termine": false,
     "heure": "03:00",
@@ -465,8 +460,8 @@
     "groupe": "A"
   },
   {
-    "equipe1": "Czechia",
-    "equipe2": "Mexico",
+    "equipe1": "Tchéquie",
+    "equipe2": "Mexique",
     "date": "2026-06-25",
     "termine": false,
     "heure": "03:00",
@@ -475,7 +470,7 @@
   },
   {
     "equipe1": "Curaçao",
-    "equipe2": "Ivory Coast",
+    "equipe2": "Côte d'Ivoire",
     "date": "2026-06-25",
     "termine": false,
     "heure": "22:00",
@@ -483,8 +478,8 @@
     "groupe": "E"
   },
   {
-    "equipe1": "Ecuador",
-    "equipe2": "Germany",
+    "equipe1": "Équateur",
+    "equipe2": "Allemagne",
     "date": "2026-06-25",
     "termine": false,
     "heure": "22:00",
@@ -492,8 +487,8 @@
     "groupe": "E"
   },
   {
-    "equipe1": "Tunisia",
-    "equipe2": "Netherlands",
+    "equipe1": "Tunisie",
+    "equipe2": "Pays-Bas",
     "date": "2026-06-26",
     "termine": false,
     "heure": "01:00",
@@ -501,8 +496,8 @@
     "groupe": "F"
   },
   {
-    "equipe1": "Japan",
-    "equipe2": "Sweden",
+    "equipe1": "Japon",
+    "equipe2": "Suède",
     "date": "2026-06-26",
     "termine": false,
     "heure": "01:00",
@@ -510,8 +505,8 @@
     "groupe": "F"
   },
   {
-    "equipe1": "Türkiye",
-    "equipe2": "USA",
+    "equipe1": "Turquie",
+    "equipe2": "États-Unis",
     "date": "2026-06-26",
     "termine": false,
     "heure": "04:00",
@@ -520,7 +515,7 @@
   },
   {
     "equipe1": "Paraguay",
-    "equipe2": "Australia",
+    "equipe2": "Australie",
     "date": "2026-06-26",
     "termine": false,
     "heure": "04:00",
@@ -528,83 +523,83 @@
     "groupe": "D"
   },
   {
-    "equipe1": "Cabo Verde",
+    "equipe1": "Cap-Vert",
     "equipe2": "Uruguay",
     "date": "2026-06-27",
     "heure": "02:00",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "H"
   },
   {
-    "equipe1": "New Zealand",
-    "equipe2": "Belgium",
+    "equipe1": "Nouvelle-Zélande",
+    "equipe2": "Belgique",
     "date": "2026-06-27",
     "heure": "05:00",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "G"
   },
   {
-    "equipe1": "Egypt",
+    "equipe1": "Égypte",
     "equipe2": "Iran",
     "date": "2026-06-27",
     "heure": "05:00",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "G"
   },
   {
     "equipe1": "Panama",
-    "equipe2": "England",
+    "equipe2": "Angleterre",
     "date": "2026-06-27",
     "heure": "23:00",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "L"
   },
   {
-    "equipe1": "Croatia",
+    "equipe1": "Croatie",
     "equipe2": "Ghana",
     "date": "2026-06-27",
     "heure": "23:00",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "L"
   },
   {
-    "equipe1": "Colombia",
+    "equipe1": "Colombie",
     "equipe2": "Portugal",
     "date": "2026-06-28",
     "heure": "01:30",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "K"
   },
   {
-    "equipe1": "DR Congo",
-    "equipe2": "Uzbekistan",
+    "equipe1": "RD Congo",
+    "equipe2": "Ouzbékistan",
     "date": "2026-06-28",
     "heure": "01:30",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "K"
   },
   {
-    "equipe1": "Algeria",
-    "equipe2": "Austria",
+    "equipe1": "Algérie",
+    "equipe2": "Autriche",
     "date": "2026-06-28",
     "heure": "04:00",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "J"
   },
   {
-    "equipe1": "Jordan",
-    "equipe2": "Argentina",
+    "equipe1": "Jordanie",
+    "equipe2": "Argentine",
     "date": "2026-06-28",
     "heure": "04:00",
-    "termine": "false",
+    "termine": false,
     "score": "Non défini",
     "groupe": "J"
   },
@@ -613,233 +608,287 @@
     "equipe2": "TBD",
     "date": "2026-06-28",
     "heure": "21:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-06-29",
     "heure": "19:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-06-29",
     "heure": "22:30",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-06-30",
     "heure": "03:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-06-30",
     "heure": "19:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-06-30",
     "heure": "23:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-01",
     "heure": "03:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-01",
     "heure": "18:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-01",
     "heure": "22:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-02",
     "heure": "02:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 32"
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-02",
+    "heure": "21:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-03",
+    "heure": "01:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-03",
+    "heure": "05:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-03",
+    "heure": "20:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-04",
+    "heure": "00:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-04",
+    "heure": "03:30",
+    "termine": false,
+    "score": " ",
+    "groupe": "Seizièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-06-29",
+    "heure": "22:30",
+    "termine": false,
+    "score": " ",
+    "groupe": "Huitièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-06-30",
+    "heure": "03:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Huitièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-06-30",
+    "heure": "19:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Huitièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-06-30",
+    "heure": "23:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Huitièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-01",
+    "heure": "03:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Huitièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-01",
+    "heure": "18:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Huitièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-01",
+    "heure": "22:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Huitièmes de finale"
+  },
+  {
+    "equipe1": "TBD",
+    "equipe2": "TBD",
+    "date": "2026-07-02",
+    "heure": "02:00",
+    "termine": false,
+    "score": " ",
+    "groupe": "Huitièmes de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-04",
     "heure": "19:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 16"
+    "termine": false,
+    "score": " ",
+    "groupe": "Quarts de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-04",
     "heure": "23:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 16"
+    "termine": false,
+    "score": " ",
+    "groupe": "Quarts de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-05",
     "heure": "22:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 16"
+    "termine": false,
+    "score": " ",
+    "groupe": "Quarts de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-06",
     "heure": "02:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 16"
-  },
-  {
-    "equipe1": "TBD",
-    "equipe2": "TBD",
-    "date": "2026-07-06",
-    "heure": "21:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 16"
-  },
-  {
-    "equipe1": "TBD",
-    "equipe2": "TBD",
-    "date": "2026-07-07",
-    "heure": "02:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 16"
+    "termine": false,
+    "score": " ",
+    "groupe": "Quarts de finale"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-07",
     "heure": "18:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 16"
+    "termine": false,
+    "score": " ",
+    "groupe": "Demi-finales"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-07",
     "heure": "22:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Round of 16"
+    "termine": false,
+    "score": " ",
+    "groupe": "Demi-finales"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-09",
     "heure": "22:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Quarter-finals"
+    "termine": false,
+    "score": " ",
+    "groupe": "Match pour la 3e place"
   },
   {
     "equipe1": "TBD",
     "equipe2": "TBD",
     "date": "2026-07-10",
     "heure": "21:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Quarter-finals"
-  },
-  {
-    "equipe1": "TBD",
-    "equipe2": "TBD",
-    "date": "2026-07-11",
-    "heure": "23:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Quarter-finals"
-  },
-  {
-    "equipe1": "TBD",
-    "equipe2": "TBD",
-    "date": "2026-07-12",
-    "heure": "03:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Quarter-finals"
-  },
-  {
-    "equipe1": "TBD",
-    "equipe2": "TBD",
-    "date": "2026-07-14",
-    "heure": "21:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Semi-finals"
-  },
-  {
-    "equipe1": "TBD",
-    "equipe2": "TBD",
-    "date": "2026-07-15",
-    "heure": "21:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Semi-finals"
-  },
-  {
-    "equipe1": "TBD",
-    "equipe2": "TBD",
-    "date": "2026-07-18",
-    "heure": "23:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Third place play-off"
-  },
-  {
-    "equipe1": "TBD",
-    "equipe2": "TBD",
-    "date": "2026-07-19",
-    "heure": "21:00",
-    "termine": "false",
-    "score": "Non défini",
-    "groupe": "Final"
+    "termine": false,
+    "score": " ",
+    "groupe": "Finale"
   }
 ]
