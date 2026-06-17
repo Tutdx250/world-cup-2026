@@ -65,6 +65,37 @@ flags = {
     "Iran": "https://flagcdn.com/w40/ir.png",
     "Corée du Sud": "https://flagcdn.com/w40/kr.png"
 }
+def build_phase(matches, phase):
+    html = ""
+
+    for m in matches:
+        if m["groupe"] != phase:
+            continue
+
+        eq1 = m.get("equipe1", "TBD")
+        eq2 = m.get("equipe2", "TBD")
+
+        if m["termine"]:
+            status = '<div class="score">Match terminé</div>'
+        else:
+            status = '<div class="future">Match à venir</div>'
+
+        html += f"""
+        <div class="match">
+            <div class="connector"></div>
+            <div class="teams">
+                {eq1} - {eq2}
+            </div>
+
+            {status}
+
+            <div class="date">
+                {m.get("date", "")} - {m.get("heure", "")}
+            </div>
+        </div>
+        """
+
+    return html
 def flag(team):
     url = flags.get(team)
     if url:
@@ -551,3 +582,178 @@ with open("site/index.html", "w", encoding="utf-8") as f:
     f.write(html)
 
 print("Site généré : site/index.html")
+
+huitiemes_html = build_phase(matches, "Huitièmes de finale")
+
+quarts_html = build_phase(matches, "Quarts de finale")
+
+demies_html = build_phase(matches, "Demi-finales")
+
+finale_html = build_phase(matches, "Finale")
+
+troisieme_html = build_phase(matches, "Match pour la 3e place")
+
+bracket_html = f"""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Phase finale</title>
+
+<style>
+body {{
+    font-family: Arial;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}}
+
+h1 {{
+    margin-bottom: 20px;
+}}
+
+.bracket {{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 70px;
+    position: relative;
+    padding-bottom: 200px;
+}}
+
+.round {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-width: 200px;
+}}
+
+.match {{
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    min-width: 180px;
+    margin: 25px 0;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}}
+
+/* =========================
+   PYRAMIDE PROPRE
+========================= */
+
+/* HUITIÈMES */
+.huitieme .match {{
+    margin: 25px 0;
+}}
+
+/* QUARTS = entre 2 huitièmes */
+.quart .match {{
+    margin: 70px 0;
+}}
+
+/* DEMIES = entre 2 quarts */
+.demi .match {{
+    margin: 140px 0;
+}}
+
+/* =========================
+   FINALE + 3E PLACE PROPRE
+========================= */
+
+.finale {{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 520px;
+}}
+
+.troisieme {{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 650px;
+}}
+
+/* =========================
+   FLÈCHES UNIQUEMENT
+========================= */
+
+.match::after {{
+    content: "➜";
+    position: absolute;
+    right: -22px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 18px;
+}}
+
+/* bouton */
+button {{
+    margin: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #0066cc;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}}
+
+button:hover {{
+    background: #004999;
+}}
+</style>
+
+</head>
+
+<body>
+
+<button onclick="window.location.href='index.html'">
+← Retour aux matchs
+</button>
+
+<h1>🏆 Phase finale</h1>
+
+<div class="bracket">
+
+    <div class="round huitieme">
+        <h2>Huitièmes</h2>
+        {huitiemes_html}
+    </div>
+
+    <div class="round quart">
+        <h2>Quarts</h2>
+        {quarts_html}
+    </div>
+
+    <div class="round demi">
+        <h2>Demi-finales</h2>
+        {demies_html}
+    </div>
+
+    <div class="round finale">
+        <h2>Finale</h2>
+        {finale_html}
+    </div>
+
+    <div class="round troisieme">
+        <h2>3e place</h2>
+        {troisieme_html}
+    </div>
+
+</div>
+
+</body>
+</html>
+"""
+
+Path("site").mkdir(exist_ok=True)
+
+with open("site/bracket.html", "w", encoding="utf-8") as f:
+    f.write(bracket_html)
+
+print("bracket généré")

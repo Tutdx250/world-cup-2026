@@ -523,7 +523,34 @@
     "groupe": "D"
   },
   {
+    "equipe1": "France",
+    "equipe2": "Norvège",
+    "date": "2026-06-26",
+    "heure": "21:00",
+    "termine": false,
+    "score": "Non défini",
+    "groupe": "I"
+  },
+  {
+    "equipe1": "Irak",
+    "equipe2": "Sénégal",
+    "date": "2026-06-26",
+    "heure": "21:00",
+    "termine": false,
+    "score": "Non défini",
+    "groupe": "I"
+  },
+  {
     "equipe1": "Cap-Vert",
+    "equipe2": "Arabie saoudite",
+    "date": "2026-06-27",
+    "heure": "02:00",
+    "termine": false,
+    "score": "Non défini",
+    "groupe": "H"
+  },
+  {
+    "equipe1": "Espagne",
     "equipe2": "Uruguay",
     "date": "2026-06-27",
     "heure": "02:00",
