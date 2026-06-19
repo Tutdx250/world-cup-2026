@@ -585,13 +585,52 @@ print("Site généré : site/index.html")
 
 huitiemes_html = build_phase(matches, "Huitièmes de finale")
 
-quarts_html = build_phase(matches, "Quarts de finale")
-
 demies_html = build_phase(matches, "Demi-finales")
 
 finale_html = build_phase(matches, "Finale")
 
 troisieme_html = build_phase(matches, "Match pour la 3e place")
+
+def build_quarts_from_huitiemes(matches):
+    huit = [m for m in matches if m["groupe"] == "Huitièmes de finale"]
+
+    html = ""
+
+    for i in range(0, len(huit), 2):
+
+        m1 = huit[i]
+        m2 = huit[i + 1] if i + 1 < len(huit) else None
+
+        html += '<div class="quart-pair">'
+
+        # 1er huitième
+        html += f"""
+        <div class="huit">
+            {m1["equipe1"]} - {m1["equipe2"]}
+        </div>
+        """
+
+        # quart au milieu
+        html += """
+        <div class="quart">
+            🏆 Quart
+        </div>
+        """
+
+        # 2e huitième
+        if m2:
+            html += f"""
+            <div class="huit">
+                {m2["equipe1"]} - {m2["equipe2"]}
+            </div>
+            """
+
+        html += "</div>"
+
+    return html
+
+
+quarts_html = build_quarts_from_huitiemes(matches)
 
 bracket_html = f"""
 <!DOCTYPE html>
@@ -617,78 +656,72 @@ h1 {{
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 70px;
+    gap: 80px;
     position: relative;
-    padding-bottom: 200px;
+    padding: 40px 0 200px 0;
 }}
 
+/* colonnes */
 .round {{
     display: flex;
     flex-direction: column;
-    align-items: center;
     position: relative;
     min-width: 200px;
 }}
 
+/* match */
 .match {{
     background: white;
     padding: 10px;
     border-radius: 10px;
     min-width: 180px;
-    margin: 25px 0;
-    position: relative;
+    margin: 18px 0;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    position: relative;
 }}
-
-/* =========================
-   PYRAMIDE PROPRE
-========================= */
 
 /* HUITIÈMES */
 .huitieme .match {{
-    margin: 25px 0;
+    margin: 35px 0;
 }}
 
-/* QUARTS = entre 2 huitièmes */
-.quart .match {{
-    margin: 70px 0;
+/* QUARTS */
+.quart {{
+    justify-content: space-around;
 }}
 
-/* DEMIES = entre 2 quarts */
-.demi .match {{
-    margin: 140px 0;
+/* DEMIES */
+.demi {{
+    justify-content: space-around;
 }}
 
-/* =========================
-   FINALE + 3E PLACE PROPRE
-========================= */
-
+/* FINALE */
 .finale {{
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 520px;
+    justify-content: center;
+    align-items: center;
 }}
 
+/* 3e place */
 .troisieme {{
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 650px;
+    right: 80px;
+    bottom: 40px;
 }}
 
-/* =========================
-   FLÈCHES UNIQUEMENT
-========================= */
-
+/* flèches */
 .match::after {{
-    content: "➜";
+    content: "→";
     position: absolute;
-    right: -22px;
+    right: -30px;
     top: 50%;
     transform: translateY(-50%);
-    color: #666;
-    font-size: 18px;
+    color: #888;
+}}
+
+/* pas de flèche finale / 3e place */
+.finale .match::after,
+.troisieme .match::after {{
+    display: none;
 }}
 
 /* bouton */
@@ -705,6 +738,26 @@ button {{
 
 button:hover {{
     background: #004999;
+}}
+.quart-pair {{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin: 40px 0;
+}}
+
+.quart {{
+    background: gold;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}}
+
+.huit {{
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
 }}
 </style>
 
@@ -746,6 +799,9 @@ button:hover {{
     </div>
 
 </div>
+</div>
+
+<script>
 
 </body>
 </html>
