@@ -1,70 +1,117 @@
 import json
 from pathlib import Path
+from urllib.request import Request, urlopen
 
-# Lecture des données
-with open("matches.json", "r", encoding="utf-8") as f:
-    matches = json.load(f)
-flags = {
-    "Canada": "https://flagcdn.com/w40/ca.png",
-    "États-Unis": "https://flagcdn.com/w40/us.png",
-    "Mexique": "https://flagcdn.com/w40/mx.png",
+API_BASE = "http://worldcup26.ir:3050"
+MATCHES_FILE = Path("matches.json")
 
-    "Arabie saoudite": "https://flagcdn.com/w40/sa.png",
-    "Australie": "https://flagcdn.com/w40/au.png",
-    "Irak": "https://flagcdn.com/w40/iq.png",
-    "Japon": "https://flagcdn.com/w40/jp.png",
-    "Jordanie": "https://flagcdn.com/w40/jo.png",
-    "Ouzbékistan": "https://flagcdn.com/w40/uz.png",
-    "Qatar": "https://flagcdn.com/w40/qa.png",
-    "République de Corée": "https://flagcdn.com/w40/kr.png",
-    "RI Iran": "https://flagcdn.com/w40/ir.png",
 
-    "Afrique du Sud": "https://flagcdn.com/w40/za.png",
-    "Algérie": "https://flagcdn.com/w40/dz.png",
-    "Cap-Vert": "https://flagcdn.com/w40/cv.png",
-    "Côte d'Ivoire": "https://flagcdn.com/w40/ci.png",
-    "Égypte": "https://flagcdn.com/w40/eg.png",
-    "Ghana": "https://flagcdn.com/w40/gh.png",
-    "Maroc": "https://flagcdn.com/w40/ma.png",
-    "RD Congo": "https://flagcdn.com/w40/cd.png",
-    "Sénégal": "https://flagcdn.com/w40/sn.png",
-    "Tunisie": "https://flagcdn.com/w40/tn.png",
+def fetch_json(url):
+    req = Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0",
+            "Accept": "application/json",
+        },
+    )
+    with urlopen(req, timeout=60) as response:
+        return json.load(response)
 
-    "Curaçao": "https://flagcdn.com/w40/cw.png",
-    "Haïti": "https://flagcdn.com/w40/ht.png",
-    "Panama": "https://flagcdn.com/w40/pa.png",
-    "Panamá": "https://flagcdn.com/w40/pa.png",
 
-    "Argentine": "https://flagcdn.com/w40/ar.png",
-    "Brésil": "https://flagcdn.com/w40/br.png",
-    "Colombie": "https://flagcdn.com/w40/co.png",
-    "Équateur": "https://flagcdn.com/w40/ec.png",
-    "Paraguay": "https://flagcdn.com/w40/py.png",
-    "Uruguay": "https://flagcdn.com/w40/uy.png",
+def parse_api_datetime(value):
+    if not value:
+        return "", ""
 
-    "Nouvelle-Zélande": "https://flagcdn.com/w40/nz.png",
+    if " " in value:
+        date_part, time_part = value.split(" ", 1)
+    else:
+        date_part, time_part = value, ""
 
-    "Allemagne": "https://flagcdn.com/w40/de.png",
-    "Angleterre": "https://flagcdn.com/w40/gb.png",
-    "Autriche": "https://flagcdn.com/w40/at.png",
-    "Belgique": "https://flagcdn.com/w40/be.png",
-    "Bosnie-et-Herzégovine": "https://flagcdn.com/w40/ba.png",
-    "Bosnia and Herzegovina": "https://flagcdn.com/w40/ba.png",
-    "Croatie": "https://flagcdn.com/w40/hr.png",
-    "Écosse": "https://flagcdn.com/w40/gb-sct.png",
-    "Espagne": "https://flagcdn.com/w40/es.png",
-    "France": "https://flagcdn.com/w40/fr.png",
-    "Norvège": "https://flagcdn.com/w40/no.png",
-    "Pays-Bas": "https://flagcdn.com/w40/nl.png",
-    "Portugal": "https://flagcdn.com/w40/pt.png",
-    "Suède": "https://flagcdn.com/w40/se.png",
-    "Suisse": "https://flagcdn.com/w40/ch.png",
-    "Tchéquie": "https://flagcdn.com/w40/cz.png",
-    "Turquie": "https://flagcdn.com/w40/tr.png",
-    "Bosnie-Herzégovine": "https://flagcdn.com/w40/ba.png",
-    "Iran": "https://flagcdn.com/w40/ir.png",
-    "Corée du Sud": "https://flagcdn.com/w40/kr.png"
-}
+    if "/" in date_part:
+        day, month, year = date_part.split("/")
+        date_part = f"{year}-{int(month):02d}-{int(day):02d}"
+
+    return date_part, time_part.strip()
+
+
+def load_matches_from_api():
+    stage_labels = {
+        "r32": "Seizièmes de finale",
+        "r16": "Huitièmes de finale",
+        "qf": "Quarts de finale",
+        "sf": "Demi-finales",
+        "third": "Match pour la 3e place",
+        "final": "Finale",
+    }
+
+    try:
+        payload = fetch_json(f"{API_BASE}/get/games")
+        raw_games = payload.get("games", [])
+        matches = []
+
+        for item in raw_games:
+            match_type = item.get("type")
+            finished = str(item.get("finished", "")).strip().upper() in {"TRUE", "1", "YES", "Y"}
+            date_part, time_part = parse_api_datetime(item.get("local_date", ""))
+
+            if match_type == "group":
+                matches.append(
+                    {
+                        "equipe1": item.get("home_team_name_en") or "TBD",
+                        "equipe2": item.get("away_team_name_en") or "TBD",
+                        "date": date_part,
+                        "heure": time_part,
+                        "termine": finished,
+                        "score": f"{item.get('home_score', 0)} - {item.get('away_score', 0)}" if finished else "Non défini",
+                        "groupe": item.get("group") or "A",
+                    }
+                )
+            elif match_type in stage_labels:
+                matches.append(
+                    {
+                        "equipe1": item.get("home_team_name_en") or "TBD",
+                        "equipe2": item.get("away_team_name_en") or "TBD",
+                        "date": date_part,
+                        "heure": time_part,
+                        "termine": finished,
+                        "score": f"{item.get('home_score', 0)} - {item.get('away_score', 0)}" if finished else "Non défini",
+                        "groupe": stage_labels[match_type],
+                    }
+                )
+
+        MATCHES_FILE.write_text(
+            json.dumps(matches, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        print("matches.json généré depuis l'API")
+        return matches
+    except Exception as e:
+        print(f"Erreur d'accès à l'API: {e}")
+        if MATCHES_FILE.exists():
+            with MATCHES_FILE.open("r", encoding="utf-8") as f:
+                return json.load(f)
+        raise
+
+
+def load_team_flags():
+    flags = {}
+    try:
+        teams_payload = fetch_json(f"{API_BASE}/get/teams")
+        for team in teams_payload.get("teams", []):
+            if team.get("flag"):
+                if team.get("name_en"):
+                    flags[team["name_en"]] = team["flag"]
+                if team.get("name_fa"):
+                    flags[team["name_fa"]] = team["flag"]
+    except Exception:
+        pass
+    return flags
+
+
+matches = load_matches_from_api()
+flags = load_team_flags()
+
+
 def build_phase(matches, phase):
     html = ""
     phase_matches = [m for m in matches if m["groupe"] == phase]
