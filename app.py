@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -34,6 +35,35 @@ def parse_api_datetime(value):
     return date_part, time_part.strip()
 
 
+def parse_scorer_entry(entry):
+    text = (entry or "").strip()
+    match = re.match(r"^(.*)\s+(\d+(?:\+\d+)?['’])$", text)
+    if match:
+        return {
+            "name": match.group(1).strip(),
+            "minute": match.group(2).strip()
+        }
+    return {"name": text, "minute": ""}
+
+
+def parse_scorer_list(raw_value):
+    if not raw_value or raw_value in ("null", "None", "[]", "{}"):
+        return []
+
+    text = str(raw_value).replace("“", '"').replace("”", '"')
+    text = text.replace("{", "[").replace("}", "]")
+
+    try:
+        parsed = json.loads(text)
+    except Exception:
+        parsed = []
+
+    if isinstance(parsed, str):
+        parsed = [parsed]
+
+    return [parse_scorer_entry(item) for item in parsed if item]
+
+
 def load_matches_from_api():
     stage_labels = {
         "r32": "Seizièmes de finale",
@@ -54,30 +84,27 @@ def load_matches_from_api():
             finished = str(item.get("finished", "")).strip().upper() in {"TRUE", "1", "YES", "Y"}
             date_part, time_part = parse_api_datetime(item.get("local_date", ""))
 
+            base_match = {
+                "equipe1": item.get("home_team_name_en") or "TBD",
+                "equipe2": item.get("away_team_name_en") or "TBD",
+                "date": date_part,
+                "heure": time_part,
+                "termine": finished,
+                "score": f"{item.get('home_score', 0)} - {item.get('away_score', 0)}" if finished else "Non défini",
+            }
+
             if match_type == "group":
-                matches.append(
-                    {
-                        "equipe1": item.get("home_team_name_en") or "TBD",
-                        "equipe2": item.get("away_team_name_en") or "TBD",
-                        "date": date_part,
-                        "heure": time_part,
-                        "termine": finished,
-                        "score": f"{item.get('home_score', 0)} - {item.get('away_score', 0)}" if finished else "Non défini",
-                        "groupe": item.get("group") or "A",
-                    }
-                )
+                base_match["groupe"] = item.get("group") or "A"
             elif match_type in stage_labels:
-                matches.append(
-                    {
-                        "equipe1": item.get("home_team_name_en") or "TBD",
-                        "equipe2": item.get("away_team_name_en") or "TBD",
-                        "date": date_part,
-                        "heure": time_part,
-                        "termine": finished,
-                        "score": f"{item.get('home_score', 0)} - {item.get('away_score', 0)}" if finished else "Non défini",
-                        "groupe": stage_labels[match_type],
-                    }
-                )
+                base_match["groupe"] = stage_labels[match_type]
+            else:
+                continue
+
+            base_match["scorers"] = {
+                "home": parse_scorer_list(item.get("home_scorers")),
+                "away": parse_scorer_list(item.get("away_scorers")),
+            }
+            matches.append(base_match)
 
         MATCHES_FILE.write_text(
             json.dumps(matches, ensure_ascii=False, indent=2),
@@ -110,6 +137,34 @@ def load_team_flags():
 
 matches = load_matches_from_api()
 flags = load_team_flags()
+
+
+def build_scorers_leaderboard(matches):
+    leaderboard = {}
+
+    for match in matches:
+        for side, team_name in (("home", match.get("equipe1")), ("away", match.get("equipe2"))):
+            for scorer in match.get("scorers", {}).get(side, []):
+                name = scorer.get("name", "")
+                if not name:
+                    continue
+                entry = leaderboard.setdefault(
+                    name,
+                    {
+                        "buts": 0,
+                        "equipe": team_name,
+                        "minutes": [],
+                    },
+                )
+                entry["buts"] += 1
+                if scorer.get("minute"):
+                    entry["minutes"].append(scorer["minute"])
+                entry["equipe"] = team_name
+
+    return sorted(
+        leaderboard.items(),
+        key=lambda item: (-item[1]["buts"], item[0])
+    )
 
 
 def build_phase(matches, phase):
@@ -236,8 +291,9 @@ def build_final_branch(matches):
 def flag(team):
     url = flags.get(team)
     if url:
-        return f'<img src="{url}" class="flag">'
+        return f'<img src="{url}" class="flag" alt="{team}">'
     return ""
+
 def calculer_classement(matches, groupe):
     classement = {}
 
@@ -370,46 +426,90 @@ html = """
 <style>
 body {
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    max-width: 1000px;
+    background:
+        radial-gradient(circle at top, #e8f5ff 0%, #f7f9ff 32%, #eef8f3 100%);
+    max-width: 1100px;
     margin: auto;
-    padding: 20px;
+    padding: 28px 18px 48px;
+    color: #16324f;
 }
 
 h1 {
     text-align: center;
+    margin: 0 0 18px;
+    color: #0b2342;
 }
 
 .match {
-    background: white;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 18px rgba(15, 38, 75, 0.08);
+    border: 1px solid #dde9f7;
 }
 
 .groupe {
-    font-size: 0.9rem;
-    color: #666;
+    font-size: 0.82rem;
+    color: #5f7b9a;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 .teams {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 12px 0;
+}
+
+.team-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.team-block.right {
+    justify-content: flex-end;
+}
+
+.team-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.score-center {
+    min-width: 84px;
+    text-align: center;
+    background: #eef7ff;
+    border-radius: 999px;
+    padding: 6px 10px;
+    color: #0d5bb7;
+    font-size: 0.92rem;
+    font-weight: 800;
 }
 
 .score {
-    color: green;
+    color: #0a9157;
     font-weight: bold;
 }
 
 .future {
-    color: #0055cc;
+    color: #0d5bb7;
+    font-weight: 700;
 }
 
 .date {
-    margin-top: 5px;
+    margin-top: 6px;
+    color: #517091;
+    font-size: 0.92rem;
 }
 .boutons{
     text-align:center;
@@ -430,12 +530,13 @@ h1 {
     background:#004999;
 }
 .flag{
-    width:22px;
-    height:16px;
+    width:26px;
+    height:18px;
     vertical-align:middle;
-    margin:0 6px;
-    border-radius:3px;
-    box-shadow:0 1px 3px rgba(0,0,0,0.2);
+    border-radius:4px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    object-fit: cover;
+    flex: 0 0 auto;
 }
 .dropdown {
     position: relative;
@@ -492,11 +593,23 @@ table {
     border-collapse: collapse;
     width: 100%;
     table-layout: fixed;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 th, td {
     text-align: center;
-    padding: 10px;
+    padding: 12px 10px;
+}
+
+th {
+    background: linear-gradient(90deg, #0d5bb7, #0a8bcb);
+    color: white;
+}
+
+tr:nth-child(even) td {
+    background: #f9fbff;
 }
 
 td:nth-child(2) {
@@ -511,6 +624,10 @@ td {
 
 .classement-groupe {
     margin-bottom: 30px;
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 6px 16px rgba(15, 38, 75, 0.06);
 }
 .toolbar {
     display: flex;
@@ -555,6 +672,7 @@ td {
 .toolbar-right {
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 .bracket-btn {
     background: gold;
@@ -570,6 +688,21 @@ td {
 
 .bracket-btn:hover {
     background: #e6c200;
+}
+.scorers-btn {
+    background: #1f8f53;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+.scorers-btn:hover {
+    background: #176d3e;
 }
 </style>
 </head>
@@ -620,6 +753,10 @@ td {
             onclick="window.location.href='bracket.html'">
         🏆 Phase finale
     </button>
+    <button class="scorers-btn"
+            onclick="window.location.href='scorers.html'">
+        ⚽ Buteurs
+    </button>
 </div>
 
 </div>
@@ -640,22 +777,30 @@ for match in matches:
     if match["termine"]:
         html += f"""
         <div class="teams">
-            {flag(match["equipe1"])} {match["equipe1"]} {match["score"]}  {match["equipe2"]} {flag(match["equipe2"])}
+            <div class="team-block">
+                <span class="team-name">{flag(match['equipe1'])} <span>{match['equipe1']}</span></span>
+            </div>
+            <div class="score-center">{match['score']}</div>
+            <div class="team-block right">
+                <span class="team-name">{flag(match['equipe2'])} <span>{match['equipe2']}</span></span>
+            </div>
         </div>
         <div class="score">Match terminé</div>
-        <div class="date">{match["date"]}</div>
+        <div class="date">{match['date']}</div>
         """
     else:
         html += f"""
         <div class="teams">
-            {flag(match["equipe1"])} {match["equipe1"]} -  {match["equipe2"]} {flag(match["equipe2"])}
+            <div class="team-block">
+                <span class="team-name">{flag(match['equipe1'])} <span>{match['equipe1']}</span></span>
+            </div>
+            <div class="score-center">VS</div>
+            <div class="team-block right">
+                <span class="team-name">{flag(match['equipe2'])} <span>{match['equipe2']}</span></span>
+            </div>
         </div>
-        <div class="future">
-            Match à venir
-        </div>
-        <div class="date">
-            {match["date"]} - {match.get("heure", "Heure non définie")}
-        </div>
+        <div class="future">Match à venir</div>
+        <div class="date">{match['date']} - {match.get('heure', 'Heure non définie')}</div>
         """
 
     html += "</div>"
@@ -720,6 +865,106 @@ with open("site/index.html", "w", encoding="utf-8") as f:
 
 print("Site généré : site/index.html")
 
+scorers_rows = build_scorers_leaderboard(matches)
+scorers_html = ""
+for name, stats in scorers_rows:
+    minutes = ", ".join(stats["minutes"][:3])
+    if len(stats["minutes"]) > 3:
+        minutes += ", ..."
+    scorers_html += f"""
+    <tr>
+        <td>{name}</td>
+        <td>{stats['equipe']}</td>
+        <td>{stats['buts']}</td>
+        <td>{minutes}</td>
+    </tr>
+    """
+
+scorers_page = f"""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classement des buteurs</title>
+<style>
+body {{
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 24px;
+}}
+.container {{
+    max-width: 1100px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}}
+h1 {{
+    text-align: center;
+    margin-top: 0;
+}}
+button {{
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 10px;
+    background: #0a66c2;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}}
+button:hover {{
+    background: #084f97;
+}}
+table {{
+    width: 100%;
+    border-collapse: collapse;
+}}
+th, td {{
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}}
+th {{
+    background: #f8fafc;
+}}
+.score {{
+    font-weight: bold;
+    color: #0b8a46;
+}}
+</style>
+</head>
+<body>
+<div class="container">
+    <button onclick="window.location.href='index.html'">← Retour au calendrier</button>
+    <h1>⚽ Classement des buteurs</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Joueur</th>
+                <th>Équipe</th>
+                <th>Buts</th>
+                <th>Minutes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {scorers_html}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+"""
+
+Path("site").mkdir(exist_ok=True)
+with open("site/scorers.html", "w", encoding="utf-8") as f:
+    f.write(scorers_page)
+
+print("scorers généré : site/scorers.html")
+
 def render_match_card(match):
     equipe1 = match.get("equipe1", "TBD")
     equipe2 = match.get("equipe2", "TBD")
@@ -738,7 +983,10 @@ def render_match_card(match):
 
     return f"""
     <div class="match-card">
-        <div class="match-teams">{equipe1} <span>vs</span> {equipe2}</div>
+        <div class="match-teams">
+            <div class="team-row">{flag(equipe1)} <span>{equipe1}</span></div>
+            <div class="team-row">{flag(equipe2)} <span>{equipe2}</span></div>
+        </div>
         {status}
         {time}
     </div>
@@ -776,7 +1024,8 @@ body {{
     margin: 0;
     padding: 24px;
     font-family: Arial, sans-serif;
-    background: #eef3f9;
+    background:
+        radial-gradient(circle at top, #e9f6ff 0%, #f9fafc 35%, #eefbf5 100%);
     color: #132238;
     min-width: 1400px;
 }}
@@ -817,10 +1066,11 @@ h1 {{
 .landscape-column {{
     min-width: 280px;
     flex: 1 1 0;
-    background: white;
+    background: linear-gradient(180deg, #ffffff 0%, #f6faff 100%);
     border-radius: 16px;
     padding: 16px;
     box-shadow: 0 6px 18px rgba(19, 34, 56, 0.08);
+    border: 1px solid #dce8f7;
 }}
 
 .landscape-column h2 {{
@@ -838,26 +1088,54 @@ h1 {{
 }}
 
 .match-card {{
-    background: #f9fbff;
+    background: linear-gradient(180deg, #f9fbff 0%, #eef7ff 100%);
     border: 1px solid #dfe7f2;
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 12px;
-    min-height: 90px;
+    min-height: 100px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
 }}
 
 .match-teams {{
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }}
 
-.match-teams span {{
-    color: #60758f;
-    font-weight: 600;
+.team-row {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}}
+
+.team-row span {{
+    color: #223652;
+    font-weight: 700;
+}}
+
+.match-status {{
+    font-size: 0.82rem;
+    font-weight: 700;
+}}
+
+.match-status.result {{
+    color: #0b8a46;
+}}
+
+.match-status.upcoming {{
+    color: #0a66c2;
+}}
+
+.match-time {{
+    font-size: 0.78rem;
+    color: #5b6d86;
 }}
 
 .match-status {{
@@ -881,6 +1159,7 @@ h1 {{
 </head>
 <body>
 <button onclick="window.location.href='index.html'">← Retour aux matchs</button>
+<button onclick="window.location.href='scorers.html'">⚽ Buteurs</button>
 <h1>🏆 Phase finale</h1>
 
 <div class="bracket-tree">
