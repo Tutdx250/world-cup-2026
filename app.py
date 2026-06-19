@@ -67,11 +67,9 @@ flags = {
 }
 def build_phase(matches, phase):
     html = ""
+    phase_matches = [m for m in matches if m["groupe"] == phase]
 
-    for m in matches:
-        if m["groupe"] != phase:
-            continue
-
+    for m in phase_matches:
         eq1 = m.get("equipe1", "TBD")
         eq2 = m.get("equipe2", "TBD")
 
@@ -96,6 +94,98 @@ def build_phase(matches, phase):
         """
 
     return html
+
+def build_match_card(match):
+    eq1 = match.get("equipe1", "TBD")
+    eq2 = match.get("equipe2", "TBD")
+    status = '<div class="score">Match terminé</div>' if match.get("termine") else '<div class="future">Match à venir</div>'
+    return f"""
+    <div class="match">
+        <div class="connector"></div>
+        <div class="teams">{eq1} - {eq2}</div>
+        {status}
+        <div class="date">{match.get("date", "")} - {match.get("heure", "")}</div>
+    </div>
+    """
+
+def build_quarter_branches(matches):
+    huit = [m for m in matches if m["groupe"] == "Huitièmes de finale"]
+    quarts = [m for m in matches if m["groupe"] == "Quarts de finale"]
+    html = ""
+
+    for i in range(len(quarts)):
+        left = huit[i * 2]
+        right = huit[i * 2 + 1]
+        html += f"""
+        <div class="branch branch-quarter">
+            <div class="branch-side">{build_match_card(left)}</div>
+            <div class="branch-connector">
+                <span class="line"></span>
+                <span class="arrow">➜</span>
+            </div>
+            <div class="branch-center">{build_match_card(quarts[i])}</div>
+            <div class="branch-connector">
+                <span class="line"></span>
+                <span class="arrow">➜</span>
+            </div>
+            <div class="branch-side">{build_match_card(right)}</div>
+        </div>
+        """
+
+    return html
+
+def build_demi_branches(matches):
+    quarts = [m for m in matches if m["groupe"] == "Quarts de finale"]
+    demis = [m for m in matches if m["groupe"] == "Demi-finales"]
+    html = ""
+
+    for i in range(len(demis)):
+        left = quarts[i * 2]
+        right = quarts[i * 2 + 1]
+        html += f"""
+        <div class="branch branch-demi">
+            <div class="branch-side">{build_match_card(left)}</div>
+            <div class="branch-connector">
+                <span class="line"></span>
+                <span class="arrow">➜</span>
+            </div>
+            <div class="branch-center">{build_match_card(demis[i])}</div>
+            <div class="branch-connector">
+                <span class="line"></span>
+                <span class="arrow">➜</span>
+            </div>
+            <div class="branch-side">{build_match_card(right)}</div>
+        </div>
+        """
+
+    return html
+
+def build_final_branch(matches):
+    demis = [m for m in matches if m["groupe"] == "Demi-finales"]
+    finale = [m for m in matches if m["groupe"] == "Finale"]
+    html = ""
+
+    if finale:
+        left = demis[0]
+        right = demis[1]
+        html += f"""
+        <div class="branch branch-final">
+            <div class="branch-side">{build_match_card(left)}</div>
+            <div class="branch-connector">
+                <span class="line"></span>
+                <span class="arrow">➜</span>
+            </div>
+            <div class="branch-center">{build_match_card(finale[0])}</div>
+            <div class="branch-connector">
+                <span class="line"></span>
+                <span class="arrow">➜</span>
+            </div>
+            <div class="branch-side">{build_match_card(right)}</div>
+        </div>
+        """
+
+    return html
+
 def flag(team):
     url = flags.get(team)
     if url:
@@ -583,54 +673,46 @@ with open("site/index.html", "w", encoding="utf-8") as f:
 
 print("Site généré : site/index.html")
 
-huitiemes_html = build_phase(matches, "Huitièmes de finale")
+def render_match_card(match):
+    equipe1 = match.get("equipe1", "TBD")
+    equipe2 = match.get("equipe2", "TBD")
+    date = match.get("date", "")
+    heure = match.get("heure", "")
 
-demies_html = build_phase(matches, "Demi-finales")
+    if match.get("termine") and match.get("score") not in (None, "", " "):
+        status = f'<div class="match-status result">{match.get("score", "")}</div>'
+    else:
+        status = '<div class="match-status upcoming">Match à venir</div>'
 
-finale_html = build_phase(matches, "Finale")
+    if heure:
+        time = f'<div class="match-time">{date} · {heure}</div>'
+    else:
+        time = f'<div class="match-time">{date}</div>'
 
-troisieme_html = build_phase(matches, "Match pour la 3e place")
-
-def build_quarts_from_huitiemes(matches):
-    huit = [m for m in matches if m["groupe"] == "Huitièmes de finale"]
-
-    html = ""
-
-    for i in range(0, len(huit), 2):
-
-        m1 = huit[i]
-        m2 = huit[i + 1] if i + 1 < len(huit) else None
-
-        html += '<div class="quart-pair">'
-
-        # 1er huitième
-        html += f"""
-        <div class="huit">
-            {m1["equipe1"]} - {m1["equipe2"]}
-        </div>
-        """
-
-        # quart au milieu
-        html += """
-        <div class="quart">
-            🏆 Quart
-        </div>
-        """
-
-        # 2e huitième
-        if m2:
-            html += f"""
-            <div class="huit">
-                {m2["equipe1"]} - {m2["equipe2"]}
-            </div>
-            """
-
-        html += "</div>"
-
-    return html
+    return f"""
+    <div class="match-card">
+        <div class="match-teams">{equipe1} <span>vs</span> {equipe2}</div>
+        {status}
+        {time}
+    </div>
+    """
 
 
-quarts_html = build_quarts_from_huitiemes(matches)
+def render_stage_column(title, matches):
+    cards = ''.join(render_match_card(match) for match in matches)
+    return f"""
+    <section class="landscape-column">
+        <h2>{title}</h2>
+        <div class="round-list">{cards}</div>
+    </section>
+    """
+
+
+huitiemes = [m for m in matches if m["groupe"] == "Huitièmes de finale"]
+quarts = [m for m in matches if m["groupe"] == "Quarts de finale"]
+demis = [m for m in matches if m["groupe"] == "Demi-finales"]
+finale = [m for m in matches if m["groupe"] == "Finale"]
+troisieme = [m for m in matches if m["groupe"] == "Match pour la 3e place"]
 
 bracket_html = f"""
 <!DOCTYPE html>
@@ -638,171 +720,135 @@ bracket_html = f"""
 <head>
 <meta charset="UTF-8">
 <title>Phase finale</title>
-
 <style>
+* {{
+    box-sizing: border-box;
+}}
+
 body {{
-    font-family: Arial;
-    background: #f4f4f4;
     margin: 0;
-    padding: 20px;
-    text-align: center;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    background: #eef3f9;
+    color: #132238;
+    min-width: 1400px;
 }}
 
-h1 {{
-    margin-bottom: 20px;
-}}
-
-.bracket {{
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 80px;
-    position: relative;
-    padding: 40px 0 200px 0;
-}}
-
-/* colonnes */
-.round {{
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    min-width: 200px;
-}}
-
-/* match */
-.match {{
-    background: white;
-    padding: 10px;
-    border-radius: 10px;
-    min-width: 180px;
-    margin: 18px 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    position: relative;
-}}
-
-/* HUITIÈMES */
-.huitieme .match {{
-    margin: 35px 0;
-}}
-
-/* QUARTS */
-.quart {{
-    justify-content: space-around;
-}}
-
-/* DEMIES */
-.demi {{
-    justify-content: space-around;
-}}
-
-/* FINALE */
-.finale {{
-    justify-content: center;
-    align-items: center;
-}}
-
-/* 3e place */
-.troisieme {{
-    position: absolute;
-    right: 80px;
-    bottom: 40px;
-}}
-
-/* flèches */
-.match::after {{
-    content: "→";
-    position: absolute;
-    right: -30px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #888;
-}}
-
-/* pas de flèche finale / 3e place */
-.finale .match::after,
-.troisieme .match::after {{
-    display: none;
-}}
-
-/* bouton */
 button {{
-    margin: 10px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    background: #0066cc;
+    margin: 0 0 16px;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 10px;
+    background: #0a66c2;
     color: white;
+    font-weight: 700;
     cursor: pointer;
-    font-weight: bold;
 }}
 
 button:hover {{
-    background: #004999;
+    background: #084f97;
 }}
-.quart-pair {{
+
+h1 {{
+    margin: 0 0 18px;
+    text-align: center;
+    font-size: 2rem;
+}}
+
+.bracket-tree {{
+    width: 100%;
+    margin: 0 auto;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    margin: 40px 0;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 16px;
+    overflow-x: auto;
+    align-items: flex-start;
+    padding-bottom: 20px;
 }}
 
-.quart {{
-    background: gold;
-    padding: 10px;
-    border-radius: 10px;
-    font-weight: bold;
-}}
-
-.huit {{
+.landscape-column {{
+    min-width: 280px;
+    flex: 1 1 0;
     background: white;
-    padding: 10px;
-    border-radius: 10px;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 6px 18px rgba(19, 34, 56, 0.08);
+}}
+
+.landscape-column h2 {{
+    margin: 0 0 12px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #4f617d;
+}}
+
+.round-list {{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}}
+
+.match-card {{
+    background: #f9fbff;
+    border: 1px solid #dfe7f2;
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+}}
+
+.match-teams {{
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.3;
+}}
+
+.match-teams span {{
+    color: #60758f;
+    font-weight: 600;
+}}
+
+.match-status {{
+    font-size: 0.82rem;
+    font-weight: 700;
+}}
+
+.match-status.result {{
+    color: #0b8a46;
+}}
+
+.match-status.upcoming {{
+    color: #0a66c2;
+}}
+
+.match-time {{
+    font-size: 0.78rem;
+    color: #5b6d86;
 }}
 </style>
-
 </head>
-
 <body>
-
-<button onclick="window.location.href='index.html'">
-← Retour aux matchs
-</button>
-
+<button onclick="window.location.href='index.html'">← Retour aux matchs</button>
 <h1>🏆 Phase finale</h1>
 
-<div class="bracket">
-
-    <div class="round huitieme">
-        <h2>Huitièmes</h2>
-        {huitiemes_html}
-    </div>
-
-    <div class="round quart">
-        <h2>Quarts</h2>
-        {quarts_html}
-    </div>
-
-    <div class="round demi">
-        <h2>Demi-finales</h2>
-        {demies_html}
-    </div>
-
-    <div class="round finale">
+<div class="bracket-tree">
+    {render_stage_column('Huitièmes de finale', huitiemes)}
+    {render_stage_column('Quarts de finale', quarts)}
+    {render_stage_column('Demi-finales', demis)}
+    <section class="landscape-column finale-block">
         <h2>Finale</h2>
-        {finale_html}
-    </div>
-
-    <div class="round troisieme">
+        <div class="round-list">{''.join(render_match_card(match) for match in finale)}</div>
+    </section>
+    <section class="landscape-column third-place-block">
         <h2>3e place</h2>
-        {troisieme_html}
-    </div>
-
+        <div class="round-list">{''.join(render_match_card(match) for match in troisieme)}</div>
+    </section>
 </div>
-</div>
-
-<script>
-
 </body>
 </html>
 """
